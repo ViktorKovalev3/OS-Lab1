@@ -10,6 +10,8 @@ static void * func1_thread(void *arg){
         fflush(stdout);
         sleep(1);
     }
+    int exit_code = 8;
+    pthread_exit((void*) exit_code);
 }
 
 static void * func2_thread(void *arg){
@@ -18,12 +20,16 @@ static void * func2_thread(void *arg){
         fflush(stdout);
         sleep(1);
     }
+    int exit_code = 9;
+    pthread_exit((void*) exit_code);
 }
 
 int main(int argc, char *argv[])
 {
     bool thread1_ended = 0;
     bool thread2_ended = 0;
+    int exit_thread_code1 = 0;
+    int exit_thread_code2 = 0;
 
     pthread_t thread1;
     pthread_t thread2;
@@ -37,10 +43,12 @@ int main(int argc, char *argv[])
     thread1_ended = 1;
     thread2_ended = 1;
 
-    if ( pthread_join( thread1, NULL ) )
+    if ( pthread_join( thread1, (void**) &exit_thread_code1 ) )
             return 1;
-    if ( pthread_join( thread2, NULL ) )
+    cout<< exit_thread_code1;
+    if ( pthread_join( thread2, (void**) &exit_thread_code2 ) )
             return 1;
+    cout<< exit_thread_code2;
 
     return 0;
 }
